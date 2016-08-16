@@ -4,7 +4,7 @@
   "description": "backend api for e-commerce",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +15,10 @@
   "bugs": {
     "url": "https://github.com/anshuraj/E-Commerce/issues"
   },
-  "homepage": "https://github.com/anshuraj/E-Commerce#readme"
+  "homepage": "https://github.com/anshuraj/E-Commerce#readme",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "mysql": "^2.11.1"
+  }
 }
