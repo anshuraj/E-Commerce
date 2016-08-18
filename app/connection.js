@@ -1,14 +1,14 @@
 var mysql = require('mysql');
-
+var config = require('./config.js')
 function Connection(){
 	this.pool = null;
 
 	this.init = function(){
 		this.pool = mysql.createPool({
-			host: 'localhost',
-			user: 'root',
-			password: 'BeatTheDefeat',
-			database: 'ecommerce'
+			host: config.host,
+			user: config.user,
+			password: config.password,
+			database: config.database
 		});
 	};
 
