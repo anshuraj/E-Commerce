@@ -1,10 +1,9 @@
 var express = require('express');
-var router = express.Router();
-
 var products = require('../models/products');
+var productRoute = express.Router();
 
-router.get('/', function(req, res){
+productRoute.get('/getproducts', function(req, res){
 	products.get(res);
 });
 
-module.exports = router;
+module.exports = productRoute;

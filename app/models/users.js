@@ -1,17 +1,16 @@
 var connection = require('../connection');
 
-var products = function() {
+var users = function() {
 	this.get = function(res){
 		connection.acquire(function(err, con){
-			con.query('select * from products', function(err, result){
+			con.query('select * from users', function(err, result){
+			        res.send(result);
 				con.release();
-				res.send(result);
 				console.log('get request');
 			});
 		});
 	};
-
-	return this;
+  return this;
 }
 
-module.exports = products;
+module.exports = users;
