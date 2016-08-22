@@ -9,6 +9,7 @@ var products = require('./routes/products');
 var users = require('./routes/users');
 var address = require('./routes/address');
 var category = require('./routes/category');
+var roles = require('./routes/roles');
 
 
 connection.init();
@@ -21,6 +22,8 @@ app.use('/api/products', products);
 app.use('/api/users', users);
 app.use('/api/address', address);
 app.use('/api/category', category);
+app.use('/api/roles', roles);
+
 
 
 var server = app.listen(3000, function () {
