@@ -8,6 +8,30 @@ var users = {
 				res.send(result);
 			});
 		});
+	},	
+	create: function(users, res) {
+		connection.acquire(function(err, con){
+			con.query('insert into users set ?', users, function(err, result){
+				con.release();
+				if(err){
+					res.send({status: 0, message: 'user creation failed'});
+				} else{
+					res.send({status: 1, message: 'user created successfully'});
+				}
+			});
+		});
+	},
+	update: function(users, res) {
+		connection.acquire(function(err, con){
+			con.query('update users set ? where id = ?', [users, users.id], function(err, result){
+				con.release();
+				if(err){
+					res.send({status: 0, message: 'user update failed'});
+				} else {
+					res.send({status: 1, message: 'user update successfull'});
+				}
+			});
+		});
 	}
 }
 

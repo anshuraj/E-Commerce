@@ -1,7 +1,7 @@
 var connection = require('../connection');
 
-var products = function() {
-	this.get = function(res){
+var products = {
+	get: function(res){
 		connection.acquire(function(err, con){
 			con.query('select * from products', function(err, result){
 				con.release();
@@ -9,9 +9,7 @@ var products = function() {
 				console.log('get request');
 			});
 		});
-	};
-
-	return this;
+	}
 }
 
 module.exports = products;
