@@ -129,7 +129,7 @@ CREATE TABLE `products` (
   `code` INT(11) NOT NULL,
   `label` VARCHAR(255) NOT NULL,
   `description` VARCHAR(50000) NOT NULL,
-  `category_id` INT(11) NOT NULL,
+  `category_id` INT(11) NOT NULL DEFAULT 0,
   `mrp` INT(11) NOT NULL,
   `vat` INT(11) NOT NULL,
   `imageurls` VARCHAR(2550) NOT NULL,
