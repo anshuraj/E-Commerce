@@ -3,10 +3,15 @@ var connection = require('../connection');
 var products = {
 	get: function(res){
 		connection.acquire(function(err, con){
+			var response = { 'result' : false, 'reason' : 'Invalid Data' };
 			con.query('select * from products', function(err, result){
 				con.release();
-				res.send(result);
-				console.log('get request');
+				if( err != null ){
+					response = { 'result' : false, 'reason' : 'Request Failed' };
+				} else {
+					response = { 'result' : true, 'reason' : 'Request Success', 'data' : result };
+				}
+				res.send(response);
 			});
 		});
 	},
@@ -48,6 +53,7 @@ var products = {
 			var query = 'INSERT INTO `products` (code, label, description, category_id, mrp, vat, imageurls, created, modified) VALUES (' + tmpData.join() + ', NOW(), NOW() )';
 			connection.acquire(function(err, con){
 				con.query( query, function(err, result){
+					con.release();
 					if( err != null ){
 						response = { 'result' : false, 'reason' : 'Product could not be Added Successfully.' }; 
 						res.send( response );
