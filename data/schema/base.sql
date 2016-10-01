@@ -27,18 +27,22 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `address` (
-  `id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `street` varchar(255) NOT NULL,
-  `landmark` varchar(255) NOT NULL,
-  `city` varchar(255) NOT NULL,
-  `state` varchar(255) NOT NULL,
-  `country` varchar(255) NOT NULL,
-  `zip` int(11) NOT NULL,
-  `phone` varchar(255) NOT NULL,
-  `created` varchar(255) NOT NULL,
-  `modified` varchar(255) NOT NULL
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `user_id` INT(11) NOT NULL,
+  `name` VARCHAR(100) NOT NULL,
+  `street` VARCHAR(100) NOT NULL,
+  `landmark` VARCHAR(100) NOT NULL,
+  `city_id` INT(11) NOT NULL,
+  `state_id` INT(11) NOT NULL,
+  `country_id` INT(11) NOT NULL,
+  `pin` VARCHAR(50) NOT NULL,
+  `phoneno` VARCHAR(100) NOT NULL,
+  `otherinfo` VARCHAR(100) NOT NULL,
+  `latitude` varchar(20) NOT NULL DEFAULT '',
+  `longitude` varchar(20) NOT NULL DEFAULT '',
+  `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -47,14 +51,15 @@ CREATE TABLE `address` (
 -- Table structure for table `category`
 --
 
-CREATE TABLE `category` (
-  `id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `label` varchar(255) NOT NULL,
-  `belong_to` varchar(255) NOT NULL,
-  `status` varchar(255) NOT NULL,
-  `created` varchar(255) NOT NULL,
-  `modified` varchar(255) NOT NULL
+CREATE TABLE `categories` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  `label` VARCHAR(255) NOT NULL,
+  `belongs_to` INT(11) NOT NULL DEFAULT 0 COMMENT 'Stores category_id of parent category, 0 - Hiegest Node in Tree',
+  `status` TINYINT(1) NOT NULL COMMENT 'Active/Inactive',
+  `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -64,15 +69,16 @@ CREATE TABLE `category` (
 --
 
 CREATE TABLE `discounts` (
-  `id` int(11) NOT NULL,
-  `sku_id` int(11) NOT NULL,
-  `percent` varchar(255) NOT NULL,
-  `amount` varchar(255) NOT NULL,
-  `start_time` varchar(255) NOT NULL,
-  `end_time` varchar(255) NOT NULL,
-  `status` varchar(255) NOT NULL,
-  `created` varchar(255) NOT NULL,
-  `modified` varchar(255) NOT NULL
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `product_id` INT(11) NOT NULL,
+  `percent` INT(11) NOT NULL DEFAULT 0,
+  `amount` INT(11) NOT NULL DEFAULT 0,
+  `starttime` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `endtime` DATETIME NOT NULL,
+  `status` TINYINT(1) NOT NULL COMMENT 'Active/Inactive',
+  `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -82,34 +88,34 @@ CREATE TABLE `discounts` (
 --
 
 CREATE TABLE `orders` (
-  `id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `payment_method` varchar(255) NOT NULL,
-  `order_state` varchar(255) NOT NULL,
-  `transaction_id` varchar(255) NOT NULL,
-  `total_amount` varchar(255) NOT NULL,
-  `address_id` int(11) NOT NULL,
-  `created` varchar(255) NOT NULL,
-  `modified` varchar(255) NOT NULL
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `user_id` INT(11) NOT NULL,
+  `orderstate_id` INT(11) NOT NULL,
+  `transaction_id` VARCHAR(255) NOT NULL,
+  `amount` INT(11) NOT NULL,
+  `address_id` INT(11) NOT NULL,
+  `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `order_details`
+-- Table structure for table `orderdetails`
 --
 
-CREATE TABLE `order_details` (
-  `id` int(11) NOT NULL,
-  `order_id` int(11) NOT NULL,
-  `sku_id` int(11) NOT NULL,
-  `mrp` varchar(255) NOT NULL,
-  `discount_id` int(11) NOT NULL,
-  `amount` varchar(255) NOT NULL,
-  `quantity` int(11) NOT NULL,
-  `fullfillment_state` varchar(255) NOT NULL,
-  `created` varchar(255) NOT NULL,
-  `modified` varchar(255) NOT NULL
+CREATE TABLE `orderdetails` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `order_id` INT(11) NOT NULL,
+  `product_id` INT(11) NOT NULL,
+  `mrp` INT(11) NOT NULL,
+  `discount_id` INT(11) NOT NULL,
+  `amount` INT(11) NOT NULL,
+  `quantity` INT(11) NOT NULL,
+  `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -119,14 +125,17 @@ CREATE TABLE `order_details` (
 --
 
 CREATE TABLE `products` (
-  `sku_id` int(11) NOT NULL,
-  `sku_code` int(11) NOT NULL,
-  `label` varchar(255) NOT NULL,
-  `description` varchar(50000) NOT NULL,
-  `category_id` int(11) NOT NULL,
-  `mrp` varchar(255) NOT NULL,
-  `vat` varchar(255) NOT NULL,
-  `image` varchar(255) NOT NULL
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `code` INT(11) NOT NULL,
+  `label` VARCHAR(255) NOT NULL,
+  `description` VARCHAR(50000) NOT NULL,
+  `category_id` INT(11) NOT NULL,
+  `mrp` INT(11) NOT NULL,
+  `vat` INT(11) NOT NULL,
+  `imageurls` VARCHAR(2550) NOT NULL,
+  `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -136,10 +145,11 @@ CREATE TABLE `products` (
 --
 
 CREATE TABLE `roles` (
-  `id` int(11) NOT NULL,
-  `role_name` varchar(255) NOT NULL,
-  `created` varchar(255) NOT NULL,
-  `modified` varchar(255) NOT NULL
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `rolename` VARCHAR(255) NOT NULL,
+  `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -149,85 +159,99 @@ CREATE TABLE `roles` (
 --
 
 CREATE TABLE `users` (
-  `id` int(11) NOT NULL,
-  `username` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `first_name` varchar(255) NOT NULL,
-  `last_name` varchar(255) NOT NULL,
-  `imgurl` varchar(255) NOT NULL,
-  `roles_id` int(11) NOT NULL,
-  `created` varchar(255) NOT NULL,
-  `modified` varchar(255) NOT NULL
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(255) NOT NULL,
+  `password` VARCHAR(255) NOT NULL,
+  `firstname` VARCHAR(255) NOT NULL,
+  `lastname` VARCHAR(255) NOT NULL,
+  `imageurl` VARCHAR(255) NOT NULL,
+  `role_id` INT(11) NOT NULL,
+  `status` TINYINT(1) NOT NULL COMMENT 'Active/Inactive',
+  `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `wishlist`
+-- Table structure for table `wishlists`
 --
 
-CREATE TABLE `wishlist` (
-  `id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `sku_id` int(11) NOT NULL,
-  `status` varchar(255) NOT NULL,
-  `created` varchar(255) NOT NULL,
-  `modified` varchar(255) NOT NULL
+CREATE TABLE `wishlists` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `user_id` INT(11) NOT NULL,
+  `sku_id` INT(11) NOT NULL,
+  `quantity` INT(11) NOT NULL,
+  `status` TINYINT(1) NOT NULL COMMENT 'Active/Inactive',
+  `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Indexes for dumped tables
---
+-- --------------------------------------------------------
 
 --
--- Indexes for table `address`
---
-ALTER TABLE `address`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `orders`
---
-ALTER TABLE `orders`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `username` (`username`);
-
---
--- Indexes for table `wishlist`
---
-ALTER TABLE `wishlist`
-  ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT for dumped tables
+-- Table structure for table `orderstates`
 --
 
+CREATE TABLE `orderstates` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(40) NOT NULL,
+  `created` datetime DEFAULT NULL,
+  `modified` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
 --
--- AUTO_INCREMENT for table `address`
+-- Table structure for table `countries`
 --
-ALTER TABLE `address`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+CREATE TABLE `countries` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(100) NOT NULL,
+  `timezone` VARCHAR(64) NOT NULL COMMENT 'Time Zones are stored in string format',
+  `status` TINYINT(1) NOT NULL COMMENT 'Active/Inactive',
+  `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
 --
--- AUTO_INCREMENT for table `orders`
+-- Table structure for table `states`
 --
-ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+CREATE TABLE `states` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(100) NOT NULL,
+  `country_id` INT(11) NOT NULL,
+  `status` TINYINT(1) NOT NULL COMMENT 'Active/Inactive',
+  `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
 --
--- AUTO_INCREMENT for table `users`
+-- Table structure for table `cities`
 --
-ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `wishlist`
---
-ALTER TABLE `wishlist`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+CREATE TABLE `cities` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(100) NOT NULL,
+  `state_id` INT(11) NOT NULL,
+  `status` TINYINT(1) NOT NULL COMMENT 'Active/Inactive',
+  `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
