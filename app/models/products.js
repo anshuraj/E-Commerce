@@ -1,10 +1,29 @@
 var connection = require('../connection');
 
 var products = {
-	get: function(res){
+	getProductDetails: function( req, res ){
+		/**
+		 * Post Paramm
+		 * {
+		 * 	"productId" : "1",
+		 * 	"searchText" : "bla"
+		 * }
+		 * */
+		var reqData = req.body;
 		connection.acquire(function(err, con){
+			var query = 'SELECT * FROM `products` ';
+			if( reqData.searchText != null && reqData.searchText != '' ){
+				query += " LEFT JOIN `categories` ON `categories`.`id` = `products`.`category_id` WHERE ( `products`.`code` LIKE '%"+reqData.searchText+"%' OR `products`.`label` LIKE '%"+reqData.searchText+"%' OR `categories`.`label` LIKE '%"+reqData.searchText+"%' )";
+			}
+			if( reqData.productId != null ){
+				if( reqData.searchText != null && reqData.searchText != '' )
+					query += " AND";
+				else
+					query += " WHERE";
+				query += " `products`.`id` = '"+reqData.productId+"'";
+			}
 			var response = { 'result' : false, 'reason' : 'Invalid Data' };
-			con.query('select * from products', function(err, result){
+			con.query( query, function(err, result){
 				con.release();
 				if( err != null ){
 					response = { 'result' : false, 'reason' : 'Request Failed' };
