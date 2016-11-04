@@ -11,7 +11,7 @@ var products = {
 		 * */
 		var reqData = req.body;
 		connection.acquire(function(err, con){
-			var query = 'SELECT * FROM `products` ';
+			var query = 'SELECT `products`.* FROM `products` ';
 			if( reqData.searchText != null && reqData.searchText != '' ){
 				query += " LEFT JOIN `categories` ON `categories`.`id` = `products`.`category_id` WHERE ( `products`.`code` LIKE '%"+reqData.searchText+"%' OR `products`.`label` LIKE '%"+reqData.searchText+"%' OR `categories`.`label` LIKE '%"+reqData.searchText+"%' )";
 			}
@@ -22,12 +22,12 @@ var products = {
 					query += " WHERE";
 				query += " `products`.`id` = '"+reqData.productId+"'";
 			}
-			var response = { 'result' : false, 'reason' : 'Invalid Data' };
+			var response = { 'result' : false, 'reason' : 'Product not found.' };
 			con.query( query, function(err, result){
 				con.release();
 				if( err != null ){
 					response = { 'result' : false, 'reason' : 'Request Failed' };
-				} else {
+				} else if( result.length != 0 ) {
 					response = { 'result' : true, 'reason' : 'Request Success', 'data' : result };
 				}
 				res.send(response);
